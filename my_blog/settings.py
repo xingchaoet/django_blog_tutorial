@@ -104,6 +104,19 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {'charset': 'utf8'},  # 增加选项
+#         'NAME': 'rumor',  # 数据库名字
+#         'USER': 'rumor',
+#         'PASSWORD': 'dH2mt75ZFYdKSzbJ',
+#         'HOST': '8.142.118.33',  # 那台机器安装了MySQL
+#         # 8.142.118.33
+#         'PORT': 3306,
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators

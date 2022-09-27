@@ -141,7 +141,7 @@
 
 - 重构视图 / 修改模板及测试
 
-**22** - [搜索文章](https://github.com/stacklens/django_blog_tutorial/blob/master/md/22.搜索文章.md)
+**22** - [搜索微博](https://github.com/stacklens/django_blog_tutorial/blob/master/md/22.搜索微博.md)
 
 - 搜索逻辑 / get 和 post 的区别 / Q对象
 - 面包屑组件 / 搜索框

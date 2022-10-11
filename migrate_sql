@@ -1,0 +1,17 @@
+innodb_large_prefix=on
+innodb_file_per_table = 1
+innodb_file_format = Barracuda
+
+python manage.py makemigrations
+python manage.py migrate
+
+alter table account_emailaddress row_format=dynamic;
+alter table account_emailconfirmation row_format=dynamic;
+alter table auth_group row_format=dynamic;
+alter table auth_group_permissions row_format=dynamic;
+alter table auth_permission row_format=dynamic;
+alter table auth_user row_format=dynamic;
+alter table auth_user_groups row_format=dynamic;
+alter table auth_user_user_permissions row_format=dynamic;
+alter table django_content_type row_format=dynamic;
+alter table django_migrations row_format=dynamic;

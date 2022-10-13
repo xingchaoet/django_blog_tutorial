@@ -3,7 +3,6 @@ from django.db import models
 from django.utils import timezone
 from django.urls import reverse
 
-# Create your models here.
 class weibo(models.Model):
     # 微博表 id,wuid,wid,weibo_link,content,img_urls,location,publish_time,publish_tool,like_num,forward_num,comment_num,
 
@@ -30,7 +29,7 @@ class weibo(models.Model):
     location = models.TextField()
 
     # 发布时间
-    publish_time = models.DateField(blank=True, null=True)
+    publish_time = models.DateTimeField(blank=True, null=True)
 
     # 发布工具
     publish_tool = models.CharField(max_length=16)

@@ -5,6 +5,11 @@ innodb_file_format = Barracuda
 python manage.py makemigrations
 python manage.py migrate
 
+
+python manage.py startapp WeiboScrapy
+
+python manage.py createsuperuser
+
 alter table account_emailaddress row_format=dynamic;
 alter table account_emailconfirmation row_format=dynamic;
 alter table auth_group row_format=dynamic;

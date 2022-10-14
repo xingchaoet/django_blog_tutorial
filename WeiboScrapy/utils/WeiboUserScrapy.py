@@ -17,12 +17,19 @@ import traceback
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from time import sleep
-
 import requests
 
 requests.packages.urllib3.disable_warnings()
 from lxml import etree
 import json
+
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_blog.settings')
+
+django.setup()
+
+from WeiboScrapy.models import weibo
 
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0'
 # Cookie = '换成你自己的 cookie, 可以参考：https://www.bilibili.com/video/BV1934y127ZM'
@@ -486,9 +493,26 @@ class WeiboUserScrapy():
     def write_db(self, wrote_num):
         """将爬取的信息写入数据库"""
         try:
-            # result_data = [w.values() for w in self.weibo][wrote_num:]
-            for w in self.weibo:
-                v = w.values()
+            result_data = [w.values() for w in self.weibo][wrote_num:]
+            # for w in self.weibo:
+            #     v = w.values()
+            for w in result_data:
+                v = list(w)
+                obj_weibo = weibo()
+                obj_weibo.wid = v[0]
+                obj_weibo.weibo_link = v[1]
+                obj_weibo.content = v[2]
+                obj_weibo.img_urls = v[3]
+                obj_weibo.location = v[4]
+                # 微博时间格式是 '2022-10-14 14:44 ' 即分+空格
+                obj_weibo.publish_time = v[5].rstrip()
+                obj_weibo.publish_tool = v[6]
+                obj_weibo.like_num = v[7]
+                obj_weibo.forward_num = v[8]
+                obj_weibo.comment_num = v[9]
+                # wid, weibo_link, content, img_urls, location, publish_time, publish_tool, like_num, forward_num, comment_num
+                obj_weibo.save()
+
             print(u'%d条微博写入数据库完毕:' % self.got_num)
         except Exception as e:
             print('Error: ', e)

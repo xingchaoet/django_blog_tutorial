@@ -32,7 +32,7 @@ class weibo(models.Model):
     publish_time = models.DateTimeField(blank=True, null=True)
 
     # 发布工具
-    publish_tool = models.CharField(max_length=16)
+    publish_tool = models.CharField(max_length=32)
 
     # 点赞量
     like_num = models.PositiveIntegerField(default=0)

@@ -490,7 +490,7 @@ class WeiboUserScrapy():
             print('Error: ', e)
             traceback.print_exc()
 
-    def write_db(self, wrote_num):
+    def write_db(self, wrote_num, item):
         """将爬取的信息写入数据库"""
         try:
             result_data = [w.values() for w in self.weibo][wrote_num:]
@@ -499,6 +499,8 @@ class WeiboUserScrapy():
             for w in result_data:
                 v = list(w)
                 obj_weibo = weibo()
+                obj_weibo.wuid = item.user_id
+                obj_weibo.wnickname = item.nickname
                 obj_weibo.wid = v[0]
                 obj_weibo.weibo_link = v[1]
                 obj_weibo.content = v[2]
@@ -518,12 +520,12 @@ class WeiboUserScrapy():
             print('Error: ', e)
             traceback.print_exc()
 
-    def write_file(self, wrote_num):
+    def write_file(self, wrote_num, item):
         """写文件"""
         if self.got_num > wrote_num:
             self.write_csv(wrote_num)
             # 写数据库
-            self.write_db(wrote_num)
+            self.write_db(wrote_num, item)
 
     def get_weibo_info(self):
         """获取微博信息"""
@@ -559,7 +561,7 @@ class WeiboUserScrapy():
                     f.write(json.dumps(old_data, indent=2))
 
                 if page % 3 == 0:  # 每爬3页写入一次文件
-                    self.write_file(wrote_num)
+                    self.write_file(wrote_num, self)
                     wrote_num = self.got_num
 
                 # 通过加入随机等待避免被限制。爬虫速度过快容易被系统限制(一段时间后限
@@ -569,7 +571,7 @@ class WeiboUserScrapy():
                     sleep(random.randint(6, 10))
                     page1 = page
                     random_pages = random.randint(1, 5)
-            self.write_file(wrote_num)  # 将剩余不足3页的微博写入文件
+            self.write_file(wrote_num, self)  # 将剩余不足3页的微博写入文件
             if not self.filter:
                 print('共爬取' + str(self.got_num) + '条微博')
             else:

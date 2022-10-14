@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 from time import sleep
 
 import requests
+
 requests.packages.urllib3.disable_warnings()
 from lxml import etree
 import json
@@ -33,8 +34,8 @@ class WeiboUserScrapy():
     def __init__(self, user_id, filter=0):
         global headers
         self.headers = {
-            'Cookie':Cookie,
-            'User_Agent':User_Agent
+            'Cookie': Cookie,
+            'User_Agent': User_Agent
         }
 
         if filter != 0 and filter != 1:
@@ -52,11 +53,10 @@ class WeiboUserScrapy():
             os.mkdir('user')
         self.run()
 
-
     def deal_html(self, url):
         """处理html"""
         try:
-            html = requests.get(url, headers=self.headers,verify=False).content
+            html = requests.get(url, headers=self.headers, verify=False).content
             selector = etree.HTML(html)
             return selector
         except Exception as e:
@@ -472,7 +472,8 @@ class WeiboUserScrapy():
             result_data = [w.values() for w in self.weibo][wrote_num:]
 
             # with open('./user/{}_{}_{}博_{}粉_{}关注.csv'.format_excc(self.user_id,self.nickname,self.weibo_num, self.followers,self.following),'a',encoding='utf-8-sig',newline='') as f:
-            with open('./user/{}_{}.csv'.format(self.user_id,self.nickname),'a',encoding='utf-8-sig',newline='') as f:
+            with open('./user/{}_{}.csv'.format(self.user_id, self.nickname), 'a', encoding='utf-8-sig',
+                      newline='') as f:
                 writer = csv.writer(f)
                 if wrote_num == 0:
                     writer.writerows([result_headers])
@@ -482,11 +483,23 @@ class WeiboUserScrapy():
             print('Error: ', e)
             traceback.print_exc()
 
+    def write_db(self, wrote_num):
+        """将爬取的信息写入数据库"""
+        try:
+            # result_data = [w.values() for w in self.weibo][wrote_num:]
+            for w in self.weibo:
+                v = w.values()
+            print(u'%d条微博写入数据库完毕:' % self.got_num)
+        except Exception as e:
+            print('Error: ', e)
+            traceback.print_exc()
 
     def write_file(self, wrote_num):
         """写文件"""
         if self.got_num > wrote_num:
             self.write_csv(wrote_num)
+            # 写数据库
+            self.write_db(wrote_num)
 
     def get_weibo_info(self):
         """获取微博信息"""
@@ -500,10 +513,10 @@ class WeiboUserScrapy():
             user_page_config = 'user_page.json'
             if not os.path.exists('user_page.json'):
                 page = 1
-                with open(user_page_config,'w', encoding='utf-8-sig') as f:
-                    f.write(json.dumps({f'{self.user_id}':page}, indent=2))
+                with open(user_page_config, 'w', encoding='utf-8-sig') as f:
+                    f.write(json.dumps({f'{self.user_id}': page}, indent=2))
             else:
-                with open(user_page_config,'r', encoding='utf-8-sig') as f:
+                with open(user_page_config, 'r', encoding='utf-8-sig') as f:
                     raw_json = json.loads(f.read())
                     if self.user_id in raw_json.keys():
                         page = raw_json[self.user_id]
@@ -514,13 +527,12 @@ class WeiboUserScrapy():
             for page in range(page, page_num + 1):
                 self.get_one_page(page)  # 获取第page页的全部微博
 
-                with open(user_page_config,'r', encoding='utf-8-sig') as f:
+                with open(user_page_config, 'r', encoding='utf-8-sig') as f:
                     old_data = json.loads(f.read())
                     old_data[f'{self.user_id}'] = page
 
-                with open(user_page_config,'w', encoding='utf-8-sig') as f:
+                with open(user_page_config, 'w', encoding='utf-8-sig') as f:
                     f.write(json.dumps(old_data, indent=2))
-
 
                 if page % 3 == 0:  # 每爬3页写入一次文件
                     self.write_file(wrote_num)
@@ -553,8 +565,9 @@ class WeiboUserScrapy():
             print('Error: ', e)
             print(traceback.format_exc())
 
+
 if __name__ == '__main__':
     # WeiboUserScrapy(user_id=2541980464, filter=0)
     # 0 所有微博；1原创微博
-    WeiboUserScrapy(user_id=1669879400, filter=1)
-
+    # WeiboUserScrapy(user_id=1669879400, filter=1)
+    WeiboUserScrapy(user_id=2180399745, filter=1)

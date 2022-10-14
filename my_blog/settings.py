@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -29,18 +28,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    #default apps
+    # default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #Third party apps
+    # Third party apps
     'bootstrap4',
     'django.contrib.sites',
     'allauth',
@@ -94,28 +92,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'my_blog.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'OPTIONS': {'charset': 'utf8'},  # 增加选项
-#         'NAME': 'microblogrumor',  # 数据库名字
-#         'USER': 'microblogrumor',
-#         'PASSWORD': 'xtBYJbT8WSjw7xMF',
-#         'HOST': '8.142.118.33',
-#         'PORT': 3306,
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"',
+            'charset': 'utf8mb4'
+        },  # 增加选项
+        'NAME': 'microblogrumor',  # 数据库名字
+        'USER': 'microblogrumor',
+        'PASSWORD': 'xtBYJbT8WSjw7xMF',
+        'HOST': '8.142.118.33',
+        'PORT': 3306,
+    }
+}
 
 # DATABASES = {
 #     'default': {
@@ -147,7 +147,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -160,7 +159,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -194,8 +192,8 @@ CKEDITOR_CONFIGS = {
     # django-ckeditor默认使用default配置
     'default': {
         # 编辑器宽度自适应
-        'width':'auto',
-        'height':'250px',
+        'width': 'auto',
+        'height': '250px',
         # tab键转换空格数
         'tabSpaces': 4,
         # 工具栏风格
@@ -203,7 +201,7 @@ CKEDITOR_CONFIGS = {
         # 工具栏按钮
         'toolbar_Custom': [
             # 表情 代码块
-            ['Smiley', 'CodeSnippet'], 
+            ['Smiley', 'CodeSnippet'],
             # 字体风格
             ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
             # 字体颜色

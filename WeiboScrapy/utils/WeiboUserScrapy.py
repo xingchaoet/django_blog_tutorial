@@ -1,13 +1,4 @@
 # -*- coding: utf-8 -*-
-# 作者:             inspurer(月小水长)
-# 创建时间:          2020/11/1 19:43
-# 运行环境           Python3.6+
-# github            https://github.com/inspurer
-# qq邮箱            2391527690@qq.com
-# 微信公众号         月小水长(ID: inspurer)
-# 文件备注信息       todo
-
-
 import csv
 import os
 import random
@@ -24,16 +15,13 @@ from lxml import etree
 import json
 
 import django
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_blog.settings')
-
 django.setup()
-
 from WeiboScrapy.models import weibo
 
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0'
 # Cookie = '换成你自己的 cookie, 可以参考：https://www.bilibili.com/video/BV1934y127ZM'
-Cookie = '_T_WM=99806b2a80c4840e86c8283a73259b8a; MLOGIN=1; SCF=Ancm_ZFseNCnteBPecyIXh2yyJJjaOy0iGj11DxD3R5yFrT3bZJq-m0wvOgtcO1dh-S0I1PLRZKq8PaN14klmeM.; SUB=_2A25OQLySDeRhGeRP41IS-SfLzzmIHXVtysTarDV6PUJbktAKLXnukW1NUBOwkXeeLCQ4SGqfWcNTb2yETmexBGU_; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W56jSfsf3SzdJj4wwDSqLw-5NHD95QEeKn7e0.4S0BfWs4DqcjeUNirIrUEMJDfMJy3; SSOLoginState=1665453250'
+Cookie = '_T_WM=99806b2a80c4840e86c8283a73259b8a; SCF=Ancm_ZFseNCnteBPecyIXh2yyJJjaOy0iGj11DxD3R5yFrT3bZJq-m0wvOgtcO1dh-S0I1PLRZKq8PaN14klmeM.; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W56jSfsf3SzdJj4wwDSqLw-5NHD95QEeKn7e0.4S0BfWs4DqcjeUNirIrUEMJDfMJy3; SUB=_2A25OTt0SDeRhGeRP41IS-SfLzzmIHXVtsONarDV6PUJbkdAKLXPTkW1NUBOwkX6oMgdKlXiayKUCUfi-QjJU_YHI; SSOLoginState=1665838402'
 
 
 class WeiboUserScrapy():
@@ -498,22 +486,44 @@ class WeiboUserScrapy():
             #     v = w.values()
             for w in result_data:
                 v = list(w)
-                obj_weibo = weibo()
-                obj_weibo.wuid = item.user_id
-                obj_weibo.wnickname = item.nickname
-                obj_weibo.wid = v[0]
-                obj_weibo.weibo_link = v[1]
-                obj_weibo.content = v[2]
-                obj_weibo.img_urls = v[3]
-                obj_weibo.location = v[4]
-                # 微博时间格式是 '2022-10-14 14:44 ' 即分+空格
-                obj_weibo.publish_time = v[5].rstrip()
-                obj_weibo.publish_tool = v[6]
-                obj_weibo.like_num = v[7]
-                obj_weibo.forward_num = v[8]
-                obj_weibo.comment_num = v[9]
-                # wid, weibo_link, content, img_urls, location, publish_time, publish_tool, like_num, forward_num, comment_num
-                obj_weibo.save()
+                # 查看记录是否存在
+                try:
+                    wbRecord = weibo.objects.get(wid=v[0])
+                    # 有记录,更新
+                    wbRecord.wuid = item.user_id
+                    wbRecord.wnickname = item.nickname
+                    # wbRecord.wid = v[0]
+                    wbRecord.weibo_link = v[1]
+                    wbRecord.content = v[2]
+                    wbRecord.img_urls = v[3]
+                    wbRecord.location = v[4]
+                    # 微博时间格式是 '2022-10-14 14:44 ' 即分+空格
+                    wbRecord.publish_time = v[5].rstrip()
+                    wbRecord.publish_tool = v[6]
+                    wbRecord.like_num = v[7]
+                    wbRecord.forward_num = v[8]
+                    wbRecord.comment_num = v[9]
+                    # wid, weibo_link, content, img_urls, location, publish_time, publish_tool, like_num, forward_num, comment_num
+                    wbRecord.save()
+                except:
+                    # 无记录，新增
+                    obj_weibo = weibo()
+                    obj_weibo.wuid = item.user_id
+                    obj_weibo.wnickname = item.nickname
+                    obj_weibo.wid = v[0]
+                    obj_weibo.weibo_link = v[1]
+                    obj_weibo.content = v[2]
+                    obj_weibo.img_urls = v[3]
+                    obj_weibo.location = v[4]
+                    # 微博时间格式是 '2022-10-14 14:44 ' 即分+空格
+                    obj_weibo.publish_time = v[5].rstrip()
+                    obj_weibo.publish_tool = v[6]
+                    obj_weibo.like_num = v[7]
+                    obj_weibo.forward_num = v[8]
+                    obj_weibo.comment_num = v[9]
+                    # wid, weibo_link, content, img_urls, location, publish_time, publish_tool, like_num, forward_num, comment_num
+                    obj_weibo.save()
+                    msg = "无可重置状态记录"
 
             print(u'%d条微博写入数据库完毕:' % self.got_num)
         except Exception as e:

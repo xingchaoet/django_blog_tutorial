@@ -1,38 +1,27 @@
 # -*- coding: utf-8 -*-
-# author:           inspurer(月小水长)
-# pc_type           lenovo
-# create_time:      2019/8/16 16:10
-# file_name:        WeiboCommentScrapy.py
-# github            https://github.com/inspurer
-# qq邮箱            2391527690@qq.com
-# 微信公众号         月小水长(ID: inspurer)
 
 import requests
-
 requests.packages.urllib3.disable_warnings()
-
 from lxml import etree
-
 from datetime import datetime, timedelta
-
 from threading import Thread
-
 import csv
-
 from math import ceil
-
 import os
-
 import re
 from time import sleep
 from random import randint
+
+import django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_blog.settings')
+django.setup()
+from WeiboScrapy.models import weibo
 
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
     # 'Cookie': '''换成你自己的 cookie'''
     'Cookie': '''_T_WM=99806b2a80c4840e86c8283a73259b8a; MLOGIN=1; SCF=Ancm_ZFseNCnteBPecyIXh2yyJJjaOy0iGj11DxD3R5yFrT3bZJq-m0wvOgtcO1dh-S0I1PLRZKq8PaN14klmeM.; SUB=_2A25OQLySDeRhGeRP41IS-SfLzzmIHXVtysTarDV6PUJbktAKLXnukW1NUBOwkXeeLCQ4SGqfWcNTb2yETmexBGU_; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W56jSfsf3SzdJj4wwDSqLw-5NHD95QEeKn7e0.4S0BfWs4DqcjeUNirIrUEMJDfMJy3; SSOLoginState=1665453250'''
 }
-
 
 class WeiboCommentScrapy(Thread):
 

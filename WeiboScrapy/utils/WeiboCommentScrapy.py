@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import requests
+
+from my_blog import settings
+import traceback
+
 requests.packages.urllib3.disable_warnings()
 from lxml import etree
 from datetime import datetime, timedelta
@@ -13,15 +17,17 @@ from time import sleep
 from random import randint
 
 import django
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'my_blog.settings')
 django.setup()
-from WeiboScrapy.models import weibo
+from WeiboScrapy.models import weibo, weibo_comments
 
 headers = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
     # 'Cookie': '''换成你自己的 cookie'''
-    'Cookie': '''_T_WM=99806b2a80c4840e86c8283a73259b8a; MLOGIN=1; SCF=Ancm_ZFseNCnteBPecyIXh2yyJJjaOy0iGj11DxD3R5yFrT3bZJq-m0wvOgtcO1dh-S0I1PLRZKq8PaN14klmeM.; SUB=_2A25OQLySDeRhGeRP41IS-SfLzzmIHXVtysTarDV6PUJbktAKLXnukW1NUBOwkXeeLCQ4SGqfWcNTb2yETmexBGU_; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W56jSfsf3SzdJj4wwDSqLw-5NHD95QEeKn7e0.4S0BfWs4DqcjeUNirIrUEMJDfMJy3; SSOLoginState=1665453250'''
+    'Cookie': settings.COOKIE
 }
+
 
 class WeiboCommentScrapy(Thread):
 
@@ -124,6 +130,48 @@ class WeiboCommentScrapy(Thread):
             writer.writerows(result)
         print('已成功将{}条评论写入{}中'.format(len(result), 'comment/' + self.wid + '.csv'))
 
+    def write_to_db(self, result, item):
+        """将爬取的信息写入数据库"""
+        try:
+            for w in result:
+                v = list(w)
+                # 查看记录是否存在
+                try:
+                    wbcRecord = weibo_comments.objects.get(wid=v[0])
+                    # 有记录,更新
+                    wbcRecord.wid = item.wid
+                    wbcRecord.c_home_page = v[0]
+                    wbcRecord.c_nickname = v[1]
+                    wbcRecord.c_sex = v[2]
+                    wbcRecord.c_place = v[3]
+                    wbcRecord.weibo_num = v[4]
+                    wbcRecord.follow_num = v[5]
+                    wbcRecord.fans_num = v[6]
+                    wbcRecord.c_content = v[7]
+                    wbcRecord.c_like_num = v[8]
+                    wbcRecord.c_publish_time = v[9]
+                    wbcRecord.save()
+                except:
+                    # 无记录，新增
+                    obj_weiboc = weibo_comments()
+                    obj_weiboc.wid = item.wid
+                    obj_weiboc.c_home_page = v[0]
+                    obj_weiboc.c_nickname = v[1]
+                    obj_weiboc.c_sex = v[2]
+                    obj_weiboc.c_place = v[3]
+                    obj_weiboc.weibo_num = v[4]
+                    obj_weiboc.follow_num = v[5]
+                    obj_weiboc.fans_num = v[6]
+                    obj_weiboc.c_content = v[7]
+                    obj_weiboc.c_like_num = v[8]
+                    obj_weiboc.c_publish_time = v[9][:15]
+                    obj_weiboc.save()
+
+            print('已成功将{}条评论写入数据库中'.format(len(result)))
+        except Exception as e:
+            print('Error: ', e)
+            traceback.print_exc()
+
     def run(self):
         res = requests.get('https://weibo.cn/comment/{}'.format(self.wid), headers=self.headers, verify=False)
         commentNum = re.findall("评论\[.*?\]", res.text)[0]
@@ -149,8 +197,10 @@ class WeiboCommentScrapy(Thread):
 
             if page == 0:
                 self.write_to_csv(result, isHeader=True)
+                self.write_to_db(result, self)
             else:
                 self.write_to_csv(result, isHeader=False)
+                self.write_to_db(result, self)
 
             sleep(randint(1, 5))
 
@@ -159,4 +209,5 @@ if __name__ == "__main__":
     # WeiboCommentScrapy(wid='IaYZIu0Ko')
 
     # WeiboCommentScrapy(wid='K2xidc8vq')
-    WeiboCommentScrapy(wid='M9mif82X1')
+    # WeiboCommentScrapy(wid='M9mif82X1')
+    WeiboCommentScrapy(wid='MaoJSo6vp')

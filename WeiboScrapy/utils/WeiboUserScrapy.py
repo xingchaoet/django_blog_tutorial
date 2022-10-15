@@ -10,6 +10,8 @@ from datetime import datetime, timedelta
 from time import sleep
 import requests
 
+from my_blog import settings
+
 requests.packages.urllib3.disable_warnings()
 from lxml import etree
 import json
@@ -21,8 +23,7 @@ from WeiboScrapy.models import weibo
 
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0'
 # Cookie = '换成你自己的 cookie, 可以参考：https://www.bilibili.com/video/BV1934y127ZM'
-Cookie = '_T_WM=99806b2a80c4840e86c8283a73259b8a; SCF=Ancm_ZFseNCnteBPecyIXh2yyJJjaOy0iGj11DxD3R5yFrT3bZJq-m0wvOgtcO1dh-S0I1PLRZKq8PaN14klmeM.; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W56jSfsf3SzdJj4wwDSqLw-5NHD95QEeKn7e0.4S0BfWs4DqcjeUNirIrUEMJDfMJy3; SUB=_2A25OTt0SDeRhGeRP41IS-SfLzzmIHXVtsONarDV6PUJbkdAKLXPTkW1NUBOwkX6oMgdKlXiayKUCUfi-QjJU_YHI; SSOLoginState=1665838402'
-
+Cookie = settings.COOKIE
 
 class WeiboUserScrapy():
 
@@ -523,7 +524,6 @@ class WeiboUserScrapy():
                     obj_weibo.comment_num = v[9]
                     # wid, weibo_link, content, img_urls, location, publish_time, publish_tool, like_num, forward_num, comment_num
                     obj_weibo.save()
-                    msg = "无可重置状态记录"
 
             print(u'%d条微博写入数据库完毕:' % self.got_num)
         except Exception as e:

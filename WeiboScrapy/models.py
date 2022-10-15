@@ -64,3 +64,28 @@ class weibo(models.Model):
     def __str__(self):
         # 将文章标题返回
         return self.wuid
+
+class weibo_comments(models.Model):
+    # 评论者主页,评论者昵称,评论者性别,评论者所在地,评论者微博数,评论者关注数,评论者粉丝数,评论内容,评论获赞数,评论发布时间
+    # 评论的微博id
+    wid = models.CharField(max_length=16)
+    # 评论者主页
+    c_home_page = models.CharField(max_length=128)
+    # 评论者昵称
+    c_nickname = models.CharField(max_length=128)
+    # 评论者性别
+    c_sex = models.CharField(max_length=16)
+    # 评论者所在地
+    c_place = models.CharField(max_length=16)
+    # 评论者微博数
+    weibo_num = models.PositiveIntegerField(default=0)
+    # 评论者关注数
+    follow_num = models.PositiveIntegerField(default=0)
+    # 评论者粉丝数
+    fans_num = models.CharField(max_length=16)
+    # 评论内容
+    c_content = models.TextField()
+    # 评论获赞数
+    c_like_num = models.PositiveIntegerField(default=0)
+    # 发布时间
+    c_publish_time = models.DateTimeField(blank=True, null=True)
